@@ -49,7 +49,7 @@ const buildQuery = (opt) => {
     let query = '';
     for(let param of params) {
         for(let [key, value] of Object.entries(opt)) {
-            if(key === param) {
+            if(key === param || key.includes(param)) {
                 url_params[key] = opt[key];
             }
         }
