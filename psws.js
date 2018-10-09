@@ -64,10 +64,12 @@ const exec = async (opt) => {
             };
         };
         
-        queue.push(task);
+        
         let i = counter++;
 
         task['my-custom-counter'] = i;
+
+        queue.push(task);
 
         const wait = () => {
             return new Promise((resolve) => {
