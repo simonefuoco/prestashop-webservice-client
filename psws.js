@@ -47,7 +47,7 @@ const req = (opt) => {
                 resultMap[task['my-custom-counter']] = res;
             });
         }
-    }, 250);
+    }, 500);
 })();
 
 const exec = async (opt) => {
@@ -79,7 +79,7 @@ const exec = async (opt) => {
                 else {
                     wait();
                 }
-            }, 250);
+            }, 500);
         };
         wait();
     });
