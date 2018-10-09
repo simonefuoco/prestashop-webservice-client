@@ -5,6 +5,8 @@ const EventEmitter = require('events');
 
 const emitter = new EventEmitter();
 const queue = [];
+const resultMap = {};
+const counter = 0;
 
 const parser = new xml2js.Parser({
     trim: true,
@@ -38,6 +40,17 @@ const req = (opt) => {
     });
 };
 
+(function() {
+    setInterval(() => {
+        if(queue.length) {
+            let task = queue.shift();
+            task(res => {
+                resultMap[task['my-custom-counter']] = res;
+            });
+        }
+    }, 250);
+})();
+
 const exec = async (opt) => {
     return new Promise((resolve) => {
         let response;
@@ -50,15 +63,30 @@ const exec = async (opt) => {
                 headers: res.headers
             };
         };
+        
         queue.push(task);
-        emitter.once('task-add', () => {
-            queue[0]().then((res) => {
-                response = res;
-                queue.shift();
-                resolve(response);
+        let i = counter++;
+
+        task['my-custom-counter'] = i;
+
+        const wait = () => {
+            return new Promise((resolve) => {
+                const timeout = () => {
+                    setTimeout(() => {
+                        if(resultMap[i]) {
+                            let res = resultMap[i];
+                            delete resultMap[i];
+                            counter--;
+                            resolve(res);
+                        }
+                        else {
+                            timeout();
+                        }
+                    }, 250);
+                };
+                timeout();
             });
-        });
-        emitter.emit('task-add');
+        };
     });
 };
 
