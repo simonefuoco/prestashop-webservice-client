@@ -39,31 +39,27 @@ const req = (opt) => {
 };
 
 const exec = async (opt) => {
-    let response;
-    const task = async () => {
-        let {err, res, body} = await req(opt);
-        if(err) return {status_code: 500, response: null, headers: null}
-        return {
-            status_code: res.statusCode,
-            response: body,
-            headers: res.headers
+    return new Promise((resolve) => {
+        let response;
+        const task = async () => {
+            let {err, res, body} = await req(opt);
+            if(err) return {status_code: 500, response: null, headers: null}
+            return {
+                status_code: res.statusCode,
+                response: body,
+                headers: res.headers
+            };
         };
-    };
-    queue.push(task);
-    emitter.once('task-add', () => {
-        queue[0]().then((res) => {
-            response = res;
-            queue.shift();
+        queue.push(task);
+        emitter.once('task-add', () => {
+            queue[0]().then((res) => {
+                response = res;
+                queue.shift();
+                resolve(response);
+            });
         });
+        emitter.emit('task-add');
     });
-    emitter.emit('task-add');
-    const wait = () => {
-        while(true) {
-            if(response) break;
-        }
-    };
-    wait();
-    return response;
 };
 
 const buildQuery = (opt) => {
