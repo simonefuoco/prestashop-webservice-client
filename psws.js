@@ -4,9 +4,9 @@ const httpBuildQuery = require('http-build-query');
 const EventEmitter = require('events');
 
 const emitter = new EventEmitter();
-const queue = [];
-const resultMap = {};
-const counter = 0;
+let queue = [];
+let resultMap = {};
+let counter = 0;
 
 const parser = new xml2js.Parser({
     trim: true,
