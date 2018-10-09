@@ -44,7 +44,7 @@ const req = (opt) => {
     setInterval(() => {
         if(queue.length) {
             let task = queue.shift();
-            task.then(res => {
+            task().then(res => {
                 resultMap[task['my-custom-counter']] = res;
             });
         }
