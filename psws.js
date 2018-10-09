@@ -49,7 +49,6 @@ const exec = async (opt) => {
             headers: res.headers
         };
     };
-    let response;
     queue.push(task);
     emitter.emit('task-add');
     emitter.once('task-add', () => {
