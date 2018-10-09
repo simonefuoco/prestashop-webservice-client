@@ -58,9 +58,9 @@ const exec = async (opt) => {
     });
     emitter.emit('task-add');
     const wait = () => {
-        setTimeout(() => {
-            if(!response) wait();
-        }, 250);
+        while(true) {
+            if(response) break;
+        }
     };
     wait();
     return response;
