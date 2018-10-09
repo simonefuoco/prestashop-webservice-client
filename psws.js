@@ -6,7 +6,6 @@ const EventEmitter = require('events');
 const emitter = new EventEmitter();
 let queue = [];
 let resultMap = {};
-let counter = 0;
 
 const parser = new xml2js.Parser({
     trim: true,
@@ -64,7 +63,7 @@ const exec = async (opt) => {
         };
         
         
-        let i = counter++;
+        let i = Date.now().toString() + (Math.ceil(Math.random()*100) + Math.ceil(Math.random()*100) * Math.ceil(Math.random()*100)).toString();
 
         task['my-custom-counter'] = i;
 
@@ -75,7 +74,6 @@ const exec = async (opt) => {
                 if(resultMap[i]) {
                     let res = resultMap[i];
                     delete resultMap[i];
-                    counter--;
                     resolve(res);
                 }
                 else {
