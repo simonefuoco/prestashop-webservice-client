@@ -53,7 +53,6 @@ const req = (opt) => {
 
 const exec = async (opt) => {
     return new Promise((resolve) => {
-        let response;
         const task = async () => {
             let {err, res, body} = await req(opt);
             if(err) return {status_code: 500, response: null, headers: null}
@@ -72,23 +71,19 @@ const exec = async (opt) => {
         queue.push(task);
 
         const wait = () => {
-            return new Promise((resolve) => {
-                const timeout = () => {
-                    setTimeout(() => {
-                        if(resultMap[i]) {
-                            let res = resultMap[i];
-                            delete resultMap[i];
-                            counter--;
-                            resolve(res);
-                        }
-                        else {
-                            timeout();
-                        }
-                    }, 250);
-                };
-                timeout();
-            });
+            setTimeout(() => {
+                if(resultMap[i]) {
+                    let res = resultMap[i];
+                    delete resultMap[i];
+                    counter--;
+                    resolve(res);
+                }
+                else {
+                    wait();
+                }
+            }, 250);
         };
+        wait();
     });
 };
 
