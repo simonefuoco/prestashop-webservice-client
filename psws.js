@@ -1,6 +1,10 @@
 const request = require('request');
 const xml2js = require('xml2js');
 const httpBuildQuery = require('http-build-query');
+const EventEmitter = require('events');
+
+const emitter = new EventEmitter();
+const queue = [];
 
 const parser = new xml2js.Parser({
     trim: true,
@@ -35,13 +39,30 @@ const req = (opt) => {
 };
 
 const exec = async (opt) => {
-    let {err, res, body} = await req(opt);
-    if(err) return {status_code: 500, response: null, headers: null}
-    return {
-        status_code: res.statusCode,
-        response: body,
-        headers: res.headers
+    let response;
+    const task = async () => {
+        let {err, res, body} = await req(opt);
+        if(err) return {status_code: 500, response: null, headers: null}
+        return {
+            status_code: res.statusCode,
+            response: body,
+            headers: res.headers
+        };
     };
+    let response;
+    queue.push(task);
+    emitter.emit('task-add');
+    emitter.once('task-add', () => {
+        response = await queue[0]();
+        queue.shift();
+    });
+    const wait = () => {
+        setTimeout(() => {
+            if(!response) wait();
+        }, 250);
+    };
+    wait();
+    return response;
 };
 
 const buildQuery = (opt) => {
