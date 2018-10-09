@@ -50,13 +50,13 @@ const exec = async (opt) => {
         };
     };
     queue.push(task);
-    emitter.emit('task-add');
     emitter.once('task-add', () => {
         queue[0]().then((res) => {
             response = res;
             queue.shift();
         });
     });
+    emitter.emit('task-add');
     const wait = () => {
         setTimeout(() => {
             if(!response) wait();
