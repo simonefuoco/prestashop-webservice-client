@@ -11,11 +11,13 @@ const parser = new xml2js.Parser({
     trim: true,
     normalize: true,
     normalizeTags: true,
-    async: true
+    async: true,
+    attrkey: 'tagAttributes'
 });
 
 const builder = new xml2js.Builder({
-    cdata: true
+    cdata: true,
+    attrkey: 'tagAttributes'
 });
 
 const parseStringAsync = async (xml) => {
