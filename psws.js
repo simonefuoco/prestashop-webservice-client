@@ -27,6 +27,7 @@ const parseStringAsync = async (xml) => {
         });
     });
 };
+
 const params = ['filter', 'display', 'sort', 'limit', 'output_format', 'schema', 'id_shop', 'id_group_shop'];
 
 const req = (opt) => {
@@ -251,5 +252,69 @@ module.exports = function(url_with_key) {
             response: req.response,
             headers: req.headers
         };
+    };
+
+    this.getModel = (resourcesName) => {
+        return require('./models/models')[resourcesName];
+    };
+    this.create = async(opt) => {
+        deleteWrongOption(opt);
+        let url = buildUrl(url_with_key, opt);
+        let res = await exec({
+            url: url,
+            method: 'POST',
+            headers: {
+                Expect: '100-continue',
+                'Content-Type': 'application/xml'
+            },
+            body: opt.model.toXML()
+        });
+        return res.status_code;
+    };
+    this.read = async(opt) => {
+        let url = buildUrl(url_with_key, opt);
+        let req = await exec({
+            url: url,
+            method: 'GET',
+            headers: {
+                Expect: '100-continue'
+            }
+        });
+        let obj = null;
+        if(opt['output_format'] === 'JSON')
+        {
+            obj = JSON.parse(req['response']);
+        }
+        else 
+        {
+            let {err, result} = await parseStringAsync(req['response']);
+            obj = result;
+        }
+    };
+    this.update = async(opt) => {
+        deleteWrongOption(opt);
+        let url = buildUrl(url_with_key, opt);
+        let res = await exec({
+            url: url,
+            method: 'PUT',
+            headers: {
+                Expect: '100-continue',
+                'Content-Type': 'application/xml'
+            },
+            body: opt.model.toXML()
+        });
+        return res.status_code;
+    };
+    this.delete = async(opt) => {
+        deleteWrongOption(opt);
+        let url = buildUrl(url_with_key, opt);
+        let res = await exec({
+            url: url,
+            method: 'DELETE',
+            headers: {
+                Expect: '100-continue'
+            }
+        });
+        return res.status_code;
     };
 }
