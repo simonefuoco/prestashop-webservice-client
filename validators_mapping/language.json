@@ -1,0 +1,32 @@
+{
+    "name": {
+        "maxSize": 32,
+        "format": "isGenericName"
+    },
+    "iso_code": {
+        "maxSize": 2,
+        "format": "isLanguageIsoCode"
+    },
+    "locale": {
+        "maxSize": 5,
+        "format": "isLocale"
+    },
+    "language_code": {
+        "maxSize": 5,
+        "format": "isLanguageCode"
+    },
+    "active": {
+        "format": "isBool"
+    },
+    "is_rtl": {
+        "format": "isBool"
+    },
+    "date_format_lite": {
+        "maxSize": 32,
+        "format": "isPhpDateFormat"
+    },
+    "date_format_full": {
+        "maxSize": 32,
+        "format": "isPhpDateFormat"
+    }
+}

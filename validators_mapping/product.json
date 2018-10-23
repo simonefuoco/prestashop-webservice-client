@@ -1,0 +1,194 @@
+{
+    "id_manufacturer": {
+        "format": "isUnsignedId"
+    },
+    "id_supplier": {
+        "format": "isUnsignedId"
+    },
+    "id_category_default": {
+        "format": "isUnsignedId"
+    },
+    "id_tax_rules_group": {
+        "format": "isUnsignedId"
+    },
+    "id_shop_default": {
+        "format": "isUnsignedId"
+    },
+    "reference": {
+        "maxSize": 32,
+        "format": "isReference"
+    },
+    "supplier_reference": {
+        "maxSize": 32,
+        "format": "isReference"
+    },
+    "location": {
+        "maxSize": 64,
+        "format": "isReference"
+    },
+    "width": {
+        "format": "isUnsignedFloat"
+    },
+    "height": {
+        "format": "isUnsignedFloat"
+    },
+    "depth": {
+        "format": "isUnsignedFloat"
+    },
+    "weight": {
+        "format": "isUnsignedFloat"
+    },
+    "quantity_discount": {
+        "format": "isBool"
+    },
+    "ean13": {
+        "maxSize": 13,
+        "format": "isEan13"
+    },
+    "isbn": {
+        "maxSize": 32,
+        "format": "isIsbn"
+    },
+    "upc": {
+        "maxSize": 12,
+        "format": "isUpc"
+    },
+    "cache_is_pack": {
+        "format": "isBool"
+    },
+    "cache_has_attachments": {
+        "format": "isBool"
+    },
+    "is_virtual": {
+        "format": "isBool"
+    },
+    "state": {
+        "format": "isUnsignedId"
+    },
+    "additional_delivery_times": {
+        "format": "isUnsignedId"
+    },
+    "delivery_in_stock": {
+        "maxSize": 255,
+        "format": "isGenericName"
+    },
+    "delivery_out_stock": {
+        "maxSize": 255,
+        "format": "isGenericName"
+    },
+    "on_sale": {
+        "format": "isBool"
+    },
+    "online_only": {
+        "format": "isBool"
+    },
+    "ecotax": {
+        "format": "isPrice"
+    },
+    "minimal_quantity": {
+        "format": "isUnsignedInt"
+    },
+    "low_stock_threshold": {
+        "format": "isInt"
+    },
+    "low_stock_alert": {
+        "format": "isBool"
+    },
+    "price": {
+        "format": "isPrice"
+    },
+    "wholesale_price": {
+        "format": "isPrice"
+    },
+    "unity": {
+        "format": "isString"
+    },
+    "additional_shipping_cost": {
+        "format": "isPrice"
+    },
+    "customizable": {
+        "format": "isUnsignedInt"
+    },
+    "text_fields": {
+        "format": "isUnsignedInt"
+    },
+    "uploadable_files": {
+        "format": "isUnsignedInt"
+    },
+    "active": {
+        "format": "isBool"
+    },
+    "redirect_type": {
+        "format": "isString"
+    },
+    "id_type_redirected": {
+        "format": "isUnsignedId"
+    },
+    "available_for_order": {
+        "format": "isBool"
+    },
+    "available_date": {
+        "format": "isDateFormat"
+    },
+    "show_condition": {
+        "format": "isBool"
+    },
+    "condition": {
+        "format": "isGenericName"
+    },
+    "show_price": {
+        "format": "isBool"
+    },
+    "indexed": {
+        "format": "isBool"
+    },
+    "visibility": {
+        "format": "isProductVisibility"
+    },
+    "advanced_stock_management": {
+        "format": "isBool"
+    },
+    "date_add": {
+        "format": "isDate"
+    },
+    "date_upd": {
+        "format": "isDate"
+    },
+    "pack_stock_type": {
+        "format": "isUnsignedInt"
+    },
+    "meta_description": {
+        "maxSize": 255,
+        "format": "isGenericName"
+    },
+    "meta_keywords": {
+        "maxSize": 255,
+        "format": "isGenericName"
+    },
+    "meta_title": {
+        "maxSize": 128,
+        "format": "isGenericName"
+    },
+    "link_rewrite": {
+        "maxSize": 128,
+        "format": "isLinkRewrite"
+    },
+    "name": {
+        "maxSize": 128,
+        "format": "isCatalogName"
+    },
+    "description": {
+        "format": "isCleanHtml"
+    },
+    "description_short": {
+        "format": "isCleanHtml"
+    },
+    "available_now": {
+        "maxSize": 255,
+        "format": "isGenericName"
+    },
+    "available_later": {
+        "maxSize": 255,
+        "format": "isGenericName"
+    }
+}
