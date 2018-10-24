@@ -1,32 +1,6 @@
 const request = require('request');
-const xml2js = require('xml2js');
 const httpBuildQuery = require('http-build-query');
-const EventEmitter = require('events');
 
-const emitter = new EventEmitter();
-let queue = [];
-let resultMap = {};
-
-const parser = new xml2js.Parser({
-    trim: true,
-    normalize: true,
-    normalizeTags: true,
-    async: true,
-    attrkey: 'tagAttributes'
-});
-
-const builder = new xml2js.Builder({
-    cdata: true,
-    attrkey: 'tagAttributes'
-});
-
-const parseStringAsync = async (xml) => {
-    return new Promise((resolve) => {
-        parser.parseString(xml, (err, result) => {
-            resolve({err, result});
-        });
-    });
-};
 const params = ['filter', 'display', 'sort', 'limit', 'output_format', 'schema', 'id_shop', 'id_group_shop'];
 
 const req = (opt) => {
@@ -41,50 +15,14 @@ const req = (opt) => {
     });
 };
 
-(function() {
-    setInterval(() => {
-        if(queue.length) {
-            let task = queue.shift();
-            task().then(res => {
-                resultMap[task['my-custom-counter']] = res;
-            });
-        }
-    }, 500);
-})();
-
 const exec = async (opt) => {
-    return new Promise((resolve) => {
-        const task = async () => {
-            let {err, res, body} = await req(opt);
-            if(err) return {status_code: 500, response: null, headers: null}
-            return {
-                status_code: res.statusCode,
-                response: body,
-                headers: res.headers
-            };
-        };
-        
-        
-        let i = Date.now().toString() + (Math.ceil(Math.random()*100) + Math.ceil(Math.random()*100) * Math.ceil(Math.random()*100)).toString();
-
-        task['my-custom-counter'] = i;
-
-        queue.push(task);
-
-        const wait = () => {
-            setTimeout(() => {
-                if(resultMap[i]) {
-                    let res = resultMap[i];
-                    delete resultMap[i];
-                    resolve(res);
-                }
-                else {
-                    wait();
-                }
-            }, 500);
-        };
-        wait();
-    });
+    let {err, res, body} = await req(opt);
+    if(err) return {status_code: 500, response: null, headers: null}
+    return {
+        status_code: res.statusCode,
+        response: body,
+        headers: res.headers
+    };
 };
 
 const buildQuery = (opt) => {
@@ -116,26 +54,10 @@ const buildUrl = (url_with_key, opt) => {
     return url;
 };
 
-const deleteWrongOption = (opt) => {
-    delete opt['output_format'];
-};
-
-const deleteReadOnlyField = (resourceSynopsis, resourceValue) => {
-    resource = JSON.parse(JSON.stringify(resourceValue));
-    for (const [key, value] of Object.entries(resourceSynopsis[0])) {
-        if (value && value[0] && value[0]['$'] && (value[0]['$']['read_only'] || value[0]['$']['readOnly'])) {
-            delete resource[0][key];
-        }
-    }
-    return JSON.parse(JSON.stringify(resource));
-};
-
 module.exports = function(url_with_key) {
     this.post = async (opt) => {
-        deleteWrongOption(opt);
         let url = buildUrl(url_with_key, opt);
-        let xml = opt['postXml'];
-        xml = builder.buildObject(xml);
+        let body = opt['body'];
         let req = await exec({
             url: url,
             method: 'POST',
@@ -143,9 +65,9 @@ module.exports = function(url_with_key) {
                 Expect: '100-continue',
                 'Content-Type': 'application/xml'
             },
-            body: xml
+            body: opt['output_format'] === 'JSON' ? JSON.stringify(body) : body
         });
-        let {err, result} = await parseStringAsync(req['response']);
+        let {err, result} = opt['output_format'] === 'JSON' ? JSON.parse(req['response']) : req['response'];
         return {
             status_code: req.status_code,
             response: result,
@@ -168,8 +90,7 @@ module.exports = function(url_with_key) {
         }
         else 
         {
-            let {err, result} = await parseStringAsync(req['response']);
-            obj = result;
+            obj = req['response'];
         }
         return {
             status_code: req.status_code,
@@ -177,30 +98,7 @@ module.exports = function(url_with_key) {
             headers: req.headers
         };
     };
-    this.getPostSchema = async(opt) => {
-        deleteWrongOption(opt);
-        opt.schema = 'blank';
-        return this.get(opt);
-    };
-    this.getPutSchema = async(opt) => {
-        deleteWrongOption(opt);
-        opt.schema = 'synopsis';
-        const id = opt.id;
-        delete opt.id;
-        var {status_code, response, headers} = await this.get(opt);
-        let synopsis = response;
-        delete opt.schema;
-        opt.id = id;
-        var {status_code, response, headers} = await this.get(opt);
-        response.prestashop.category = deleteReadOnlyField(synopsis.prestashop.category, response.prestashop.category);
-        return {
-            status_code: status_code,
-            response: response,
-            headers: headers
-        };
-    };
     this.head = async (opt) => {
-        deleteWrongOption(opt);
         let url = buildUrl(url_with_key, opt);
         let req = await exec({
             url: url,
@@ -216,10 +114,8 @@ module.exports = function(url_with_key) {
         };
     };
     this.put = async (opt) => {
-        deleteWrongOption(opt);
         let url = buildUrl(url_with_key, opt);
-        let xml = opt['putXml'];
-        xml = builder.buildObject(xml);
+        let xml = opt['body'];
         let req = await exec({
             url: url,
             method: 'PUT',
@@ -227,9 +123,9 @@ module.exports = function(url_with_key) {
                 Expect: '100-continue',
                 'Content-Type': 'application/xml'
             },
-            body: xml
+            body: opt['output_format'] === 'JSON' ? JSON.stringify(body) : body
         });
-        let {err, result} = await parseStringAsync(req['response']);
+        let {err, result} = opt['output_format'] === 'JSON' ? JSON.parse(req['response']) : req['response'];
         return {
             status_code: req.status_code,
             response: result,
@@ -237,7 +133,6 @@ module.exports = function(url_with_key) {
         };
     };
     this.delete = async (opt) => {
-        deleteWrongOption(opt);
         let url = buildUrl(url_with_key, opt);
         let req = await exec({
             url: url,
