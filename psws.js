@@ -115,17 +115,16 @@ module.exports = function(url_with_key) {
     };
     this.put = async (opt) => {
         let url = buildUrl(url_with_key, opt);
-        let xml = opt['body'];
+        let body = opt['body'];
         let req = await exec({
             url: url,
             method: 'PUT',
             headers: {
-                Expect: '100-continue',
-                'Content-Type': 'application/xml'
+                Expect: '100-continue'
             },
             body: opt['output_format'] === 'JSON' ? JSON.stringify(body) : body
         });
-        let {err, result} = opt['output_format'] === 'JSON' ? JSON.parse(req['response']) : req['response'];
+        let result = opt['output_format'] === 'JSON' ? JSON.parse(req['response']) : req['response'];
         return {
             status_code: req.status_code,
             response: result,
